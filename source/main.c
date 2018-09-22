@@ -11,8 +11,8 @@ void func_memory_free(double** array_matrix, int var_columns);
 void func_matrix_input (FILE *file_input_file, double **array_matrix, int var_columns, int var_rows);
 void func_matrix_output_screen (double **array_matrix, int var_columns, int var_rows);
 void func_matrix_output_screen_column (double **array_matrix, int var_columns, int var_rows);
-double func_array_minimal (double* array, int n);
-double func_array_maximal (double* array, int n);
+double func_array_minimal_index (double* array, int n);
+double func_array_maximal_index (double* array, int n);
 
 int main(){
 
@@ -93,7 +93,7 @@ void func_matrix_output_screen_table (double **array_matrix, int var_columns, in
 
 void algoryth_MinMax (double **array_matrix, int var_columns, int var_rows){
 	double var_alpha, var_beta;
-	double var_current_alpha;
+	double var_current_alpha, var_current_beta;
 
 	double *array_min_in_rows, *array_max_in_columns;
 
@@ -114,30 +114,46 @@ void algoryth_MinMax (double **array_matrix, int var_columns, int var_rows){
 		array_min_in_rows [i] = var_current_alpha;
 	}
 	//2. Выбираем максимум из минимума.
-	var_alpha = func_array_maximal (array_min_in_rows, var_rows);
-	printf ("%lf", var_alpha);
+	// Запоминаем именно индекс, т.к. благодаря этому мы сможем указать строку.
+	var_alpha = func_array_maximal_index (array_min_in_rows, var_rows);
+	//printf ("%lf", var_alpha);
+	
+	// Определение стратегии МиниМакса.
+	//1. Ищем максимумы в строках.
+	for (int j = 0; j < var_columns; j ++){
+		var_current_beta = array_matrix[0][j];
+		for (int i = 0; i < var_columns; i++){
+			if (var_current_beta < array_matrix [i] [j])
+				var_current_beta = array_matrix [i] [j];
+		}
+		array_max_in_columns [j] = var_current_beta;
+	}
+
+
 	free (array_min_in_rows);
 	free (array_max_in_columns);
 }
 
-double func_array_minimal (double* array, int n){
-	double min = array [0];
+double func_array_minimal_index (double* array, int n){
+	int min_index = 0;
 	for (int i = 0; i < n; i++)
 	{
-		if (array [i] < min)
-			min = array [i];
+		if (array [i] < array [min_index]){
+			min_index = i;
+		}
 	}
-	return min;
+	return min_index;
 }
 
-double func_array_maximal (double* array, int n){
-	double min = array [0];
+double func_array_maximal_index (double* array, int n){
+	int max_index = 0;
 	for (int i = 0; i < n; i++)
 	{
-		if (array [i] >	 min)
-			min = array [i];
+		if (array [i] > array[max_index]){
+			max_index = i;
+		}
 	}
-	return min;
+	return max_index;
 }
 
 	
