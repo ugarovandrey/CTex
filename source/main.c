@@ -2,8 +2,6 @@
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
-//#include "TEX.c"
-
 
 //Функция для tex-форматирования
 void func_TEX_new_document (FILE *TEX_output_file);
@@ -173,35 +171,20 @@ void algoryth_MinMax (FILE *TEX_document, double **array_matrix, int var_columns
 	free (array_max_in_columns);
 }
 
-
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
 						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index,\
 						  bool var_seddle_point_exist)
 {
-	/* Вывод в *.tex-файл матрицы
-	
-	func_TEX_matrix_output (array_matrix, var_columns, var_rows);
-	FILE *TEX_document;
-
-	char* string_TEX_document_name = "output.tex";
-
-	*/
+	/* Вывод в *.tex-файл матрицы	*/
 
 	if (TEX_document != NULL){
-		/* func_TEX_new_document (TEX_document);
-		func_matrix_output_screen (array_matrix, var_columns, var_rows); 
-		*/
-
 		if (var_seddle_point_exist == true)
 		{
 			fprintf (TEX_document, "Исходная матрица имеет вид: \n");
 		}
 		func_TEX_matrix_output (TEX_document, array_matrix, var_columns, var_rows);
-		//func_TEX_end_document (TEX_document);
 	}
-	//fclose(TEX_document);
 }
-
 	
 double func_array_minimal_index (double* array, int n){
 	int min_index = 0;
