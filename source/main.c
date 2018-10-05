@@ -2,30 +2,16 @@
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
+#include "TEX/tex.h"
+#include "MATRIX/matrix.h"
+#include "ARRAY/array.h"
 
-//Функция для tex-форматирования
-void func_TEX_new_document (FILE *TEX_output_file);
-void func_TEX_matrix_output (FILE *TEX_output_file, double **array_matrix, int var_columns, int var_rows);
-void func_TEX_number_output (FILE *TEX_output_file, double number);
-void func_TEX_end_document (FILE *TEX_output_file);
+
 
 //Функции, связанные с реализацией МиниМакса
 void algoryth_MinMax(FILE *TEX_document, double **array_matrix, int var_columns, int var_rows);
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
-						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index,\
-						  bool var_seddle_point_exist);
-
-//Функции по работе с матрицей
-double** func_memory_allocation(FILE *file_input_file, int var_columns, int var_rows );
-void func_memory_free(double** array_matrix, int var_columns);
-void func_matrix_input (FILE *file_input_file, double **array_matrix, int var_columns, int var_rows);
-void func_matrix_output_screen (double **array_matrix, int var_columns, int var_rows);
-void func_matrix_output_screen_table (double **array_matrix, int var_columns, int var_rows);
- 
-//Функции по работе с массивами
-double func_array_minimal_index (double* array, int n);
-double func_array_maximal_index (double* array, int n);
-
+						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index);
 
 int main(){
 
@@ -66,61 +52,7 @@ int main(){
 	return 0;
 }
 
-
-double** func_memory_allocation(FILE *file_input_file, int var_columns, int var_rows ){
-		double** array_input_matrix;
-		array_input_matrix = (double **)malloc(sizeof(double*)*var_rows);
-		for (int i = 0; i < var_rows; i++)
-		{
-			array_input_matrix [i] = (double*)malloc(sizeof(double)*var_columns);
-		}
-		return array_input_matrix;
-}
-
-void func_memory_free(double** array_matrix, int var_rows){
-		for (int i = 0; i < var_rows; i++)
-			free(array_matrix [i]);
-		free(array_matrix);
-}
-
-void func_matrix_input (FILE *file_input_file, double **array_matrix, int var_columns, int var_rows){
-	if (file_input_file != NULL){
-		for (int i = 0; i < var_rows; i++)
-			for (int j = 0; j < var_columns; j++)
-			{
-				fscanf (file_input_file, "%lf", &array_matrix [i] [j]);
-				//printf ("[%d][%d] = %lf\n", i, j, array_matrix[i][j]); 	
-			}
-	}
-	else
-		printf ("Input file doesn't exist!\n");
-	return;
-}
-
-void func_matrix_output_screen (double **array_matrix, int var_columns, int var_rows){
-	for (int i = 0; i < var_rows; i++){
-			for (int j = 0; j < var_columns; j++)
-			{
-				printf ("%.2lf ",array_matrix[i][j]); 	
-			}
-			printf ("\n");
-	}
-}
-
-void func_matrix_output_screen_table (double **array_matrix, int var_columns, int var_rows){
-		for (int i = 0; i < var_rows; i++)
-			for (int j = 0; j < var_columns; j++)
-			{
-				printf ("[%d][%d] = %5.2lf\n", i, j, array_matrix[i][j]); 	
-			}
-}
-
 void algoryth_MinMax (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows){
-	/* 
-		TODO: необходимо избавиться от вспомогательных массивов (array_min_in_rows, array_max_in_columns).
-		Считать максимум(минимум) можно прямо в цикле.
-	*/
-	bool var_seddle_point_exist = false;
 	int var_alpha_index, var_beta_index;
 	double var_alpha, var_beta;
 	double var_current_alpha, var_current_beta;
@@ -159,81 +91,36 @@ void algoryth_MinMax (FILE *TEX_document, double **array_matrix, int var_columns
 	var_beta_index = func_array_minimal_index (array_max_in_columns, var_columns);
 	var_beta = array_max_in_columns [var_beta_index];
 	//Проверяем, не являются ли полученные результаты седловой точкой.
-
-	if (var_alpha == var_beta)
-		var_seddle_point_exist = true;
 	
 	func_MiniMax_output (TEX_document, array_matrix, var_columns, var_rows, \
-						 var_alpha, var_beta, var_alpha_index, var_beta_index, \
-						 var_seddle_point_exist);
+						 var_alpha, var_beta, var_alpha_index, var_beta_index);
 
 	free (array_min_in_rows);
 	free (array_max_in_columns);
 }
 
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
-						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index,\
-						  bool var_seddle_point_exist)
+						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index)
 {
 	/* Вывод в *.tex-файл матрицы	*/
 
 	if (TEX_document != NULL){
-		if (var_seddle_point_exist == true)
-		{
-			fprintf (TEX_document, "Исходная матрица имеет вид: \n");
-		}
+		fprintf (TEX_document, "Исходная матрица имеет вид: \n");
 		func_TEX_matrix_output (TEX_document, array_matrix, var_columns, var_rows);
+		func_TEX_number_output (TEX_document, var_alpha_index);
+		fprintf (TEX_document, " строчка  - стратегия максмина \n"); 
+		func_TEX_number_output (TEX_document, var_beta_index);
+		fprintf (TEX_document, " столбец  - стратегия минимакса \n"); 
+		if (var_alpha  == var_beta)
+		{
+			func_TEX_number_output_int (TEX_document, var_alpha_index);	
+			fprintf (TEX_document, " строчка, ");
+			func_TEX_number_output_int (TEX_document, var_beta_index);
+			fprintf (TEX_document, " столбец  - оптимальное решение игры \n"); 
+		}
+		
 	}
 }
+
+
 	
-double func_array_minimal_index (double* array, int n){
-	int min_index = 0;
-	for (int i = 0; i < n; i++)
-	{
-		if (array [i] < array [min_index]){
-			min_index = i;
-		}
-	}
-	return min_index;
-}
-
-double func_array_maximal_index (double* array, int n){
-	int max_index = 0;
-	for (int i = 0; i < n; i++)
-	{
-		if (array [i] > array[max_index]){
-			max_index = i;
-		}
-	}
-	return max_index;
-}
-
-void func_TEX_new_document (FILE *TEX_output_file){
-	fprintf (TEX_output_file, "\\documentclass{article}\n");
-	fprintf (TEX_output_file, "\\usepackage[utf8]{inputenc}\n");
-	fprintf (TEX_output_file, "\\usepackage[russian]{babel}\n");
-	fprintf (TEX_output_file, "\\usepackage{amsmath}\n");
-	fprintf (TEX_output_file, "\\begin{document}\n");
-
-}
-void func_TEX_end_document (FILE *TEX_output_file){
-		fprintf (TEX_output_file, "\\end{document}\n");
-}
-
-void func_TEX_matrix_output (FILE *TEX_output_file, double **array_matrix, int var_columns, int var_rows){
-	// Любая функция, связанная в печатью в ТЕХ начинается с отбития пустой строки.array_matrix
-	fprintf (TEX_output_file, "\n");
-	fprintf (TEX_output_file, "$$\\begin{pmatrix}\n");
-	for (int i = 0; i < var_rows; i++){
-			for (int j = 0; j < var_columns; j++)
-			{
-				fprintf (TEX_output_file, "%0.2lf",array_matrix[i][j]); 
-				if (j == var_columns - 1)
-					fprintf (TEX_output_file, "\\\\"); 
-				else
-					fprintf (TEX_output_file, "&"); 
-			}
-			fprintf (TEX_output_file, "\n");
-	}
-	fprintf (TEX_output_file, "\\end{pmatrix}$$\n");
-}
