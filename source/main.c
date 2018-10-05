@@ -6,8 +6,6 @@
 #include "MATRIX/matrix.h"
 #include "ARRAY/array.h"
 
-
-
 //Функции, связанные с реализацией МиниМакса
 void algoryth_MinMax(FILE *TEX_document, double **array_matrix, int var_columns, int var_rows);
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
