@@ -11,6 +11,7 @@ void algoryth_MinMax(FILE *TEX_document, double **array_matrix, int var_columns,
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
 						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index);
 
+
 int main(){
 
 	FILE *file_input_file;
@@ -28,7 +29,7 @@ int main(){
 	if ((file_input_file = fopen(string_input_file, "r")) != NULL){
 		fscanf (file_input_file, "%d", &var_columns);
 		fscanf (file_input_file, "%d", &var_rows);
-		array_input_matrix = func_memory_allocation(file_input_file, var_columns, var_rows);	
+		array_input_matrix = func_memory_allocation_double(file_input_file, var_columns, var_rows);	
 		func_matrix_input(file_input_file, array_input_matrix, var_columns, var_rows);
 		if ((file_TEX_output = fopen(string_TEX_document_name, "a")) != NULL){
 			func_TEX_new_document(file_TEX_output);
@@ -100,8 +101,6 @@ void algoryth_MinMax (FILE *TEX_document, double **array_matrix, int var_columns
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
 						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index)
 {
-	/* Вывод в *.tex-файл матрицы	*/
-
 	if (TEX_document != NULL){
 		fprintf (TEX_document, "Исходная матрица имеет вид: \n");
 		func_TEX_matrix_output (TEX_document, array_matrix, var_columns, var_rows);
