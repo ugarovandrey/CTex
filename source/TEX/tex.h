@@ -12,7 +12,7 @@ void func_TEX_matrix_output_int (FILE *TEX_output_file, int **array_matrix, int 
 void func_TEX_matrix_output_double (FILE *TEX_output_file, double **array_matrix, int var_columns, int var_rows);
 void func_TEX_matrix_output_char (FILE *TEX_output_file, char **array_matrix, int var_columns, int var_rows);
 #define func_TEX_matrix_output(param1, param2, param3, param4) \
-	_Generic ((Y), \
+	_Generic ((param2), \
 	int**: func_TEX_matrix_output_int,\
 	double**: func_TEX_matrix_output_double, \
 	char**: func_TEX_matrix_output_char,\
@@ -22,21 +22,38 @@ void func_TEX_matrix_output_char (FILE *TEX_output_file, char **array_matrix, in
 /*  --- --- --- --- --- --- --- --- --- ------ --- --- ---
     --- --- --- --- --- = Печать столбца = --- --- --- ---  
     --- --- --- --- --- --- --- --- --- ------ --- --- ---  */
-
 void func_TEX_row_output_int (FILE *TEX_output_file, int **array_matrix, \
-							  int var_columns, int var_rows, int outputed_row);
+							  int var_columns, int var_rows, int output_row);
 void func_TEX_row_output_double (FILE *TEX_output_file, double **array_matrix, \
 							  int var_columns, int var_rows, int outputed_row);
 void func_TEX_row_output_char (FILE *TEX_output_file, char **array_matrix, \
 							  int var_columns, int var_rows, int outputed_row);
 
-#define func_TEX_row_output (FILE, matrix, columns, rows, row) \
-	_GENERIC((matrix),\
+#define func_TEX_row_output(FILE, matrix, columns, rows, row) \
+	_Generic((matrix),\
 	int**: func_TEX_row_output_int,\
 	double**: func_TEX_row_output_double,\
 	char**: func_TEX_row_output_char,\
 	default: func_TEX_row_output_char \
 )(FILE, matrix, columns, rows, row)
+
+/*  --- --- --- --- --- --- --- --- --- ------ --- --- ---
+    --- --- --- --- --- = Печать  строки = --- --- --- ---  
+    --- --- --- --- --- --- --- --- --- ------ --- --- ---  */
+void func_TEX_column_output_int (FILE *TEX_output_file, int **array_matrix, \
+							  int var_columns, int var_rows, int output_column);
+void func_TEX_column_output_double (FILE *TEX_output_file, double **array_matrix, \
+							  int var_columns, int var_rows, int output_column);
+void func_TEX_column_output_char (FILE *TEX_output_file, char **array_matrix, \
+							  int var_columns, int var_rows, int output_column);
+
+#define func_TEX_column_output(FILE, matrix, columns, rows, column) \
+	_Generic((matrix), \
+	int**: func_TEX_column_output_int,\
+	double**: func_TEX_column_output_double,\
+	char**: func_TEX_column_output_char,\
+	default: func_TEX_column_output_char \
+)(FILE, matrix, columns, rows, column)
 
 /*  --- --- --- --- --- --- --- --- --- ------ --- --- ---
     --- --- --- --- --- =  Печать числа  = --- --- --- ---  

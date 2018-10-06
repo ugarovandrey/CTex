@@ -104,15 +104,17 @@ void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_col
 	if (TEX_document != NULL){
 		fprintf (TEX_document, "Исходная матрица имеет вид: \n");
 		func_TEX_matrix_output (TEX_document, array_matrix, var_columns, var_rows);
-		func_TEX_number_output (TEX_document, var_alpha_index);
-		fprintf (TEX_document, " строчка  - стратегия максмина \n"); 
-		func_TEX_number_output (TEX_document, var_beta_index);
-		fprintf (TEX_document, " столбец  - стратегия минимакса \n"); 
-		if (var_alpha  == var_beta)
+		func_TEX_number_output (TEX_document, var_alpha_index + 1);
+		fprintf (TEX_document, " строчка  - стратегия максмина: \n"); 
+		func_TEX_row_output (TEX_document, array_matrix, var_columns, var_rows, var_alpha_index);
+		func_TEX_number_output (TEX_document, var_beta_index + 1);
+		fprintf (TEX_document, " столбец  - стратегия минимакса: \n"); 
+		func_TEX_column_output (TEX_document, array_matrix, var_columns, var_rows, var_beta_index);
+		if (var_alpha == var_beta)
 		{
-			func_TEX_number_output_int (TEX_document, var_alpha_index);	
+			func_TEX_number_output_int (TEX_document, var_alpha_index + 1);	
 			fprintf (TEX_document, " строчка, ");
-			func_TEX_number_output_int (TEX_document, var_beta_index);
+			func_TEX_number_output_int (TEX_document, var_beta_index + 1);
 			fprintf (TEX_document, " столбец  - оптимальное решение игры \n"); 
 		}
 		
