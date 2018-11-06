@@ -5,17 +5,23 @@
 #include "TEX/tex.h"
 #include "MATRIX/matrix.h"
 #include "ARRAY/array.h"
+#include "CRITERIA/criteria.h"
 
 //Функции, связанные с реализацией МиниМакса
 void algoryth_MinMax(FILE *TEX_document, double **array_matrix, int var_columns, int var_rows);
 void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, \
 						  double var_alpha, double var_beta, int var_alpha_index, int var_beta_index);
 
+void criteria_output(FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, double lambda, double *array_chance);
+
 
 int main(){
 
 	FILE *file_input_file;
 	FILE *file_TEX_output;
+
+	double array_chance[5] = { 0.2, 0.2, 0.2, 0.2, 0.2 };
+	double lambda = 0.5;
 
 	char* string_TEX_document_name = "output.tex";
 	
@@ -34,7 +40,9 @@ int main(){
 		if ((file_TEX_output = fopen(string_TEX_document_name, "a")) != NULL){
 			func_TEX_new_document(file_TEX_output);
 			algoryth_MinMax(file_TEX_output, array_input_matrix, var_columns, var_rows);
+			criteria_output(file_TEX_output, array_input_matrix, var_columns, var_rows, lambda, array_chance);
 			func_TEX_end_document(file_TEX_output);
+			
 			fclose(file_TEX_output);
 		}
 		else
@@ -121,5 +129,21 @@ void func_MiniMax_output (FILE *TEX_document, double **array_matrix, int var_col
 	}
 }
 
-
-	
+void criteria_output(FILE *TEX_document, double **array_matrix, int var_columns, int var_rows, double lambda, double *array_chance) {
+	if (TEX_document != NULL) {
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию оптимизма: ");
+		func_TEX_number_output(TEX_document, criteria_optimistic(array_matrix,  var_columns, var_rows) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию Вальда: ");
+		func_TEX_number_output(TEX_document, criteria_wald(array_matrix, var_columns, var_rows) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию Сэвиджа: ");
+		func_TEX_number_output(TEX_document, criteria_savage(array_matrix, var_columns, var_rows) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию Гурвитца: ");
+		func_TEX_number_output(TEX_document, criteria_gurvitz(array_matrix, var_columns, var_rows, lambda) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию пессимизма: ");
+		func_TEX_number_output(TEX_document, criteria_pessimistic(array_matrix, var_columns, var_rows) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию максимального среднего дохода: ");
+		func_TEX_number_output(TEX_document, criteria_max_average(array_matrix, var_columns, var_rows, array_chance) + 1);
+		fprintf(TEX_document, "\nОптимальная стратегия по критерию оптимизма среднего риска: ");
+		func_TEX_number_output(TEX_document, criteria_optimistic_average(array_matrix, var_columns, var_rows, array_chance) + 1);
+	}
+}
